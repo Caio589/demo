@@ -138,15 +138,20 @@ function criarGraficos() {
   if (graficoFaturamento) graficoFaturamento.destroy();
   if (graficoVendas) graficoVendas.destroy();
 
-  const valores = vendas.map(v => v.valor);
+  // 🔥 FATURAMENTO ACUMULADO
+  let acumulado = 0;
+  const faturamentoAcumulado = vendas.map(v => {
+    acumulado += v.valor;
+    return acumulado;
+  });
 
   graficoFaturamento = new Chart(fat, {
     type: "line",
     data: {
-      labels: valores.map((_, i) => `Venda ${i + 1}`),
+      labels: faturamentoAcumulado.map((_, i) => `Venda ${i + 1}`),
       datasets: [{
-        label: "Faturamento (R$)",
-        data: valores,
+        label: "Faturamento acumulado (R$)",
+        data: faturamentoAcumulado,
         borderWidth: 3,
         tension: 0.4
       }]
@@ -155,11 +160,15 @@ function criarGraficos() {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
-        y: { min: 0, max: 50000 }
+        y: {
+          min: 0,
+          max: 50000
+        }
       }
     }
   });
 
+  // 📊 QUANTIDADE DE VENDAS
   graficoVendas = new Chart(qtd, {
     type: "bar",
     data: {
@@ -171,10 +180,7 @@ function criarGraficos() {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: { min: 0, max: 50000 }
-      }
+      maintainAspectRatio: false
     }
   });
 }
