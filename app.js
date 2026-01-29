@@ -61,25 +61,30 @@ function addProduto() {
 
 // VENDAS
 function registrarVenda() {
-  const cliente = document.getElementById("clienteVenda").value;
-  const pagamento = document.getElementById("pagamentoVenda").value;
-  const produtoIndex = document.getElementById("produtoVenda").selectedIndex;
+  const clienteEl = document.getElementById("clienteVenda");
+  const produtoEl = document.getElementById("produtoVenda");
+  const pagamentoEl = document.getElementById("pagamentoVenda");
+
+  const cliente = clienteEl.value;
+  const pagamento = pagamentoEl.value;
+  const produtoIndex = produtoEl.selectedIndex;
 
   if (!cliente || !pagamento || produtoIndex < 0) {
-    alert("Preencha todos os campos");
+    alert("Preencha cliente, produto e forma de pagamento");
     return;
   }
 
   const produto = produtos[produtoIndex];
 
-  vendas.push({
-    cliente,
+  const venda = {
+    cliente: cliente,
     produto: produto.nome,
-    valor: produto.preco,
-    pagamento,
-    data: new Date().toLocaleString()
-  });
+    valor: Number(produto.preco),
+    pagamento: pagamento,
+    data: new Date().toLocaleString("pt-BR")
+  };
 
+  vendas.push(venda);
   salvar();
 
   const msg = document.getElementById("msgVenda");
@@ -110,12 +115,12 @@ function atualizar() {
     produtos.map(p => `<option>${p.nome}</option>`).join("");
 
   document.getElementById("listaVendas").innerHTML =
-    vendas.slice(-5).reverse().map(v =>
-      `<li>
-        ${v.produto} - R$ ${v.valor.toFixed(2)}<br>
-        <small>${v.pagamento} • ${v.data}</small>
-      </li>`
-    ).join("");
+  vendas.slice(-5).reverse().map(v =>
+    `<li>
+      ${v.produto} - R$ ${Number(v.valor).toFixed(2)}<br>
+      <small>${v.pagamento || "-"} • ${v.data || "-"}</small>
+    </li>`
+  ).join("");
 
   document.getElementById("vendas").innerText = vendas.length;
   document.getElementById("clientes").innerText = clientes.length;
