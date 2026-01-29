@@ -1,0 +1,76 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f9;
+}
+
+.hidden { display: none; }
+
+#login {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.1);
+  width: 300px;
+  text-align: center;
+}
+
+.login-card input, .login-card button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+.login-card button {
+  background: #6a0dad;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+}
+
+#app {
+  display: flex;
+  height: 100vh;
+}
+
+aside {
+  width: 220px;
+  background: #6a0dad;
+  color: #fff;
+  padding: 20px;
+}
+
+aside button {
+  width: 100%;
+  margin: 5px 0;
+  padding: 10px;
+  background: rgba(255,255,255,.15);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+  gap: 15px;
+}
+
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,.08);
+}
