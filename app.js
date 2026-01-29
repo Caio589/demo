@@ -38,9 +38,34 @@ function addProduto() {
 }
 
 function registrarVenda() {
-  const p = produtos[produtoVenda.selectedIndex];
-  vendas.push(p.preco);
+
+  // validações
+  if (clientes.length === 0) {
+    alert("Cadastre um cliente antes de registrar a venda");
+    return;
+  }
+
+  if (produtos.length === 0) {
+    alert("Cadastre um produto antes de registrar a venda");
+    return;
+  }
+
+  if (produtoVenda.selectedIndex < 0) {
+    alert("Selecione um produto");
+    return;
+  }
+
+  const produtoSelecionado = produtos[produtoVenda.selectedIndex];
+
+  if (!produtoSelecionado || produtoSelecionado.preco === undefined) {
+    alert("Produto inválido");
+    return;
+  }
+
+  vendas.push(Number(produtoSelecionado.preco));
   salvar();
+
+  alert("Venda registrada com sucesso!");
 }
 
 function salvar() {
