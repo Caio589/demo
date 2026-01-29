@@ -8,45 +8,62 @@
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="login">
   <div class="login-card">
     <h2>Dashboard Administrativo</h2>
     <input id="user" placeholder="Usuário">
     <input id="pass" type="password" placeholder="Senha">
     <button onclick="login()">Entrar</button>
+    <p>demo / 1234</p>
   </div>
 </div>
 
+<!-- APP -->
 <div id="app" class="hidden">
   <aside>
     <h3>Dashboard</h3>
-    <nav>
-      <button onclick="show('home')">📊 Dashboard</button>
-      <button onclick="show('sales')">💰 Vendas</button>
-      <button onclick="show('clients')">👥 Clientes</button>
-      <button onclick="show('products')">📦 Produtos</button>
-      <button onclick="logout()">🚪 Sair</button>
-    </nav>
+    <button onclick="show('home')">📊 Dashboard</button>
+    <button onclick="show('sales')">💰 Vendas</button>
+    <button onclick="show('clients')">👥 Clientes</button>
+    <button onclick="show('products')">📦 Produtos</button>
+    <button onclick="logout()">🚪 Sair</button>
   </aside>
 
   <main>
+    <!-- DASHBOARD -->
     <section id="home" class="page">
       <h2>Resumo Geral</h2>
+
       <div class="cards">
         <div class="card">Vendas<br><strong id="vendas">0</strong></div>
         <div class="card">Clientes<br><strong id="clientes">0</strong></div>
         <div class="card">Produtos<br><strong id="produtos">0</strong></div>
         <div class="card">Faturamento<br><strong>R$ <span id="faturamento">0</span></strong></div>
       </div>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Faturamento</h3>
+          <canvas id="graficoFaturamento"></canvas>
+        </div>
+
+        <div class="card">
+          <h3>Quantidade de Vendas</h3>
+          <canvas id="graficoVendas"></canvas>
+        </div>
+      </div>
     </section>
 
+    <!-- VENDAS -->
     <section id="sales" class="page hidden">
-      <h2>Nova Venda</h2>
+      <h2>Registrar Venda</h2>
       <select id="clienteVenda"></select>
       <select id="produtoVenda"></select>
       <button onclick="registrarVenda()">Registrar Venda</button>
     </section>
 
+    <!-- CLIENTES -->
     <section id="clients" class="page hidden">
       <h2>Clientes</h2>
       <input id="novoCliente" placeholder="Nome do cliente">
@@ -54,6 +71,7 @@
       <ul id="listaClientes"></ul>
     </section>
 
+    <!-- PRODUTOS -->
     <section id="products" class="page hidden">
       <h2>Produtos</h2>
       <input id="nomeProduto" placeholder="Produto">
@@ -64,6 +82,7 @@
   </main>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
