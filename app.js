@@ -6,14 +6,9 @@ let graficoFaturamento;
 let graficoVendas;
 
 function doLogin() {
-  const loginDiv = document.getElementById("login");
-  const appDiv = document.getElementById("app");
-  const userInput = document.getElementById("user");
-  const passInput = document.getElementById("pass");
-
-  if (userInput.value === "demo" && passInput.value === "1234") {
-    loginDiv.style.display = "none";
-    appDiv.classList.remove("hidden");
+  if (user.value === "demo" && pass.value === "1234") {
+    login.style.display = "none";
+    app.classList.remove("hidden");
     atualizar();
   } else {
     alert("Login inválido");
@@ -45,9 +40,26 @@ function addProduto() {
 
 function registrarVenda() {
   const produto = produtos[produtoVenda.selectedIndex];
-  if (!produto) return;
-  vendas.push(produto.preco);
+  const pagamento = pagamentoVenda.value;
+  const cliente = clienteVenda.value;
+
+  if (!produto || !pagamento || !cliente) {
+    alert("Preencha todos os campos");
+    return;
+  }
+
+  vendas.push({
+    produto: produto.nome,
+    valor: produto.preco,
+    pagamento,
+    cliente,
+    data: new Date().toLocaleString()
+  });
+
   salvar();
+
+  msgVenda.style.display = "block";
+  setTimeout(() => msgVenda.style.display = "none", 2000);
 }
 
 function salvar() {
@@ -58,19 +70,28 @@ function salvar() {
 }
 
 function atualizar() {
+
   listaClientes.innerHTML = clientes.map(c => `<li>${c}</li>`).join("");
-  listaProdutos.innerHTML = produtos.map(p => `<li>${p.nome} - R$ ${p.preco}</li>`).join("");
+  listaProdutos.innerHTML = produtos.map(p => `<li>${p.nome} - R$ ${p.preco.toFixed(2)}</li>`).join("");
 
   clienteVenda.innerHTML = clientes.map(c => `<option>${c}</option>`).join("");
   produtoVenda.innerHTML = produtos.map(p => `<option>${p.nome}</option>`).join("");
 
-  const total = vendas.reduce((a, b) => a + b, 0);
+  listaVendas.innerHTML = vendas.slice(-5).reverse().map(v =>
+    `<li>
+      ${v.produto} - R$ ${v.valor.toFixed(2)}<br>
+      <small>${v.pagamento} • ${v.data}</small>
+    </li>`
+  ).join("");
 
-  vendas.innerText;
+  const total = vendas.reduce((s, v) => s + v.valor, 0);
+
+  vendasEl.innerText;
   document.getElementById("vendas").innerText = vendas.length;
   document.getElementById("clientes").innerText = clientes.length;
   document.getElementById("produtos").innerText = produtos.length;
-  document.getElementById("faturamento").innerText = total;
+  document.getElementById("faturamento").innerText =
+    total.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
 
   criarGraficos();
 }
@@ -80,25 +101,24 @@ function criarGraficos() {
   if (graficoFaturamento) graficoFaturamento.destroy();
   if (graficoVendas) graficoVendas.destroy();
 
+  const valores = vendas.map(v => v.valor);
+
   graficoFaturamento = new Chart(
     document.getElementById("graficoFaturamento"),
     {
       type: "line",
       data: {
-        labels: vendas.map((_, i) => `Venda ${i + 1}`),
+        labels: valores.map((_, i) => `Venda ${i + 1}`),
         datasets: [{
           label: "Faturamento (R$)",
-          data: vendas,
+          data: valores,
           borderWidth: 3,
           tension: 0.4
         }]
       },
       options: {
         scales: {
-          y: {
-            min: 0,
-            max: 50000
-          }
+          y: { min: 0, max: 50000 }
         }
       }
     }
@@ -114,14 +134,6 @@ function criarGraficos() {
           label: "Quantidade",
           data: [vendas.length]
         }]
-      },
-      options: {
-        scales: {
-          y: {
-            min: 0,
-            max: 50000
-          }
-        }
       }
     }
   );
