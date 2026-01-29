@@ -2,18 +2,17 @@ let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
 let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
 let vendas = JSON.parse(localStorage.getItem("vendas")) || [];
 
+let graficoFaturamento;
+let graficoVendas;
+
 function login() {
   if (user.value === "demo" && pass.value === "1234") {
-    loginDiv(true);
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").classList.remove("hidden");
+    atualizar();
   } else {
     alert("Login inválido");
   }
-}
-
-function loginDiv(ok) {
-  document.getElementById("login").style.display = ok ? "none" : "flex";
-  document.getElementById("app").classList.toggle("hidden", !ok);
-  atualizar();
 }
 
 function logout() {
@@ -26,46 +25,31 @@ function show(id) {
 }
 
 function addCliente() {
+  if (!novoCliente.value) return;
   clientes.push(novoCliente.value);
   novoCliente.value = "";
   salvar();
 }
 
 function addProduto() {
-  produtos.push({nome: nomeProduto.value, preco: precoProduto.value});
+  if (!nomeProduto.value || !precoProduto.value) return;
+  produtos.push({ nome: nomeProduto.value, preco: Number(precoProduto.value) });
   nomeProduto.value = precoProduto.value = "";
   salvar();
 }
 
 function registrarVenda() {
-
-  // validações
-  if (clientes.length === 0) {
-    alert("Cadastre um cliente antes de registrar a venda");
+  if (clientes.length === 0 || produtos.length === 0) {
+    alert("Cadastre cliente e produto");
     return;
   }
 
-  if (produtos.length === 0) {
-    alert("Cadastre um produto antes de registrar a venda");
-    return;
-  }
+  const produto = produtos[produtoVenda.selectedIndex];
+  if (!produto) return;
 
-  if (produtoVenda.selectedIndex < 0) {
-    alert("Selecione um produto");
-    return;
-  }
-
-  const produtoSelecionado = produtos[produtoVenda.selectedIndex];
-
-  if (!produtoSelecionado || produtoSelecionado.preco === undefined) {
-    alert("Produto inválido");
-    return;
-  }
-
-  vendas.push(Number(produtoSelecionado.preco));
+  vendas.push(produto.preco);
   salvar();
-
-  alert("Venda registrada com sucesso!");
+  alert("Venda registrada!");
 }
 
 function salvar() {
@@ -82,11 +66,44 @@ function atualizar() {
   clienteVenda.innerHTML = clientes.map(c => `<option>${c}</option>`).join("");
   produtoVenda.innerHTML = produtos.map(p => `<option>${p.nome}</option>`).join("");
 
-  vendasSpan = vendas.reduce((a,b)=>a+Number(b),0);
+  const total = vendas.reduce((a, b) => a + b, 0);
 
-  vendas.innerHTML;
   document.getElementById("vendas").innerText = vendas.length;
   document.getElementById("clientes").innerText = clientes.length;
   document.getElementById("produtos").innerText = produtos.length;
-  document.getElementById("faturamento").innerText = vendasSpan;
+  document.getElementById("faturamento").innerText = total;
+
+  criarGraficos();
+}
+
+function criarGraficos() {
+  const ctx1 = document.getElementById("graficoFaturamento");
+  const ctx2 = document.getElementById("graficoVendas");
+
+  if (graficoFaturamento) graficoFaturamento.destroy();
+  if (graficoVendas) graficoVendas.destroy();
+
+  graficoFaturamento = new Chart(ctx1, {
+    type: "line",
+    data: {
+      labels: vendas.map((_, i) => `Venda ${i + 1}`),
+      datasets: [{
+        label: "Faturamento (R$)",
+        data: vendas,
+        borderWidth: 2,
+        tension: 0.4
+      }]
+    }
+  });
+
+  graficoVendas = new Chart(ctx2, {
+    type: "bar",
+    data: {
+      labels: ["Vendas"],
+      datasets: [{
+        label: "Quantidade",
+        data: [vendas.length]
+      }]
+    }
+  });
 }
