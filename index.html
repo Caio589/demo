@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Administrativo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="login">
+  <div class="login-card">
+    <h2>Dashboard Administrativo</h2>
+    <input id="user" placeholder="Usuário">
+    <input id="pass" type="password" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <aside>
+    <h3>Dashboard</h3>
+    <nav>
+      <button onclick="show('home')">📊 Dashboard</button>
+      <button onclick="show('sales')">💰 Vendas</button>
+      <button onclick="show('clients')">👥 Clientes</button>
+      <button onclick="show('products')">📦 Produtos</button>
+      <button onclick="logout()">🚪 Sair</button>
+    </nav>
+  </aside>
+
+  <main>
+    <section id="home" class="page">
+      <h2>Resumo Geral</h2>
+      <div class="cards">
+        <div class="card">Vendas<br><strong id="vendas">0</strong></div>
+        <div class="card">Clientes<br><strong id="clientes">0</strong></div>
+        <div class="card">Produtos<br><strong id="produtos">0</strong></div>
+        <div class="card">Faturamento<br><strong>R$ <span id="faturamento">0</span></strong></div>
+      </div>
+    </section>
+
+    <section id="sales" class="page hidden">
+      <h2>Nova Venda</h2>
+      <select id="clienteVenda"></select>
+      <select id="produtoVenda"></select>
+      <button onclick="registrarVenda()">Registrar Venda</button>
+    </section>
+
+    <section id="clients" class="page hidden">
+      <h2>Clientes</h2>
+      <input id="novoCliente" placeholder="Nome do cliente">
+      <button onclick="addCliente()">Adicionar</button>
+      <ul id="listaClientes"></ul>
+    </section>
+
+    <section id="products" class="page hidden">
+      <h2>Produtos</h2>
+      <input id="nomeProduto" placeholder="Produto">
+      <input id="precoProduto" type="number" placeholder="Preço">
+      <button onclick="addProduto()">Adicionar</button>
+      <ul id="listaProdutos"></ul>
+    </section>
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
