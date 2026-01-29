@@ -77,24 +77,55 @@ function atualizar() {
 }
 
 function criarGraficos() {
-  const ctx1 = document.getElementById("graficoFaturamento");
-  const ctx2 = document.getElementById("graficoVendas");
+
+  if (typeof Chart === "undefined") {
+    console.error("Chart.js não carregou");
+    return;
+  }
+
+  const canvasFat = document.getElementById("graficoFaturamento");
+  const canvasVen = document.getElementById("graficoVendas");
+
+  if (!canvasFat || !canvasVen) {
+    console.warn("Canvas do gráfico não encontrado");
+    return;
+  }
 
   if (graficoFaturamento) graficoFaturamento.destroy();
   if (graficoVendas) graficoVendas.destroy();
 
-  graficoFaturamento = new Chart(ctx1, {
+  graficoFaturamento = new Chart(canvasFat, {
     type: "line",
     data: {
       labels: vendas.map((_, i) => `Venda ${i + 1}`),
       datasets: [{
         label: "Faturamento (R$)",
         data: vendas,
-        borderWidth: 2,
+        borderWidth: 3,
         tension: 0.4
       }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
     }
   });
+
+  graficoVendas = new Chart(canvasVen, {
+    type: "bar",
+    data: {
+      labels: ["Vendas"],
+      datasets: [{
+        label: "Quantidade",
+        data: [vendas.length]
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+}
 
   graficoVendas = new Chart(ctx2, {
     type: "bar",
