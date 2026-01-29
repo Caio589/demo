@@ -7,8 +7,8 @@ let graficoVendas;
 
 function login() {
   if (user.value === "demo" && pass.value === "1234") {
-    document.getElementById("login").style.display = "none";
-    document.getElementById("app").classList.remove("hidden");
+    login.style.display = "none";
+    app.classList.remove("hidden");
     atualizar();
   } else {
     alert("Login inválido");
@@ -39,17 +39,10 @@ function addProduto() {
 }
 
 function registrarVenda() {
-  if (clientes.length === 0 || produtos.length === 0) {
-    alert("Cadastre cliente e produto");
-    return;
-  }
-
   const produto = produtos[produtoVenda.selectedIndex];
   if (!produto) return;
-
   vendas.push(produto.preco);
   salvar();
-  alert("Venda registrada!");
 }
 
 function salvar() {
@@ -68,6 +61,7 @@ function atualizar() {
 
   const total = vendas.reduce((a, b) => a + b, 0);
 
+  vendas.innerText;
   document.getElementById("vendas").innerText = vendas.length;
   document.getElementById("clientes").innerText = clientes.length;
   document.getElementById("produtos").innerText = produtos.length;
@@ -78,63 +72,52 @@ function atualizar() {
 
 function criarGraficos() {
 
-  if (typeof Chart === "undefined") {
-    console.error("Chart.js não carregou");
-    return;
-  }
-
-  const canvasFat = document.getElementById("graficoFaturamento");
-  const canvasVen = document.getElementById("graficoVendas");
-
-  if (!canvasFat || !canvasVen) {
-    console.warn("Canvas do gráfico não encontrado");
-    return;
-  }
-
   if (graficoFaturamento) graficoFaturamento.destroy();
   if (graficoVendas) graficoVendas.destroy();
 
-  graficoFaturamento = new Chart(canvasFat, {
-    type: "line",
-    data: {
-      labels: vendas.map((_, i) => `Venda ${i + 1}`),
-      datasets: [{
-        label: "Faturamento (R$)",
-        data: vendas,
-        borderWidth: 3,
-        tension: 0.4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false
+  graficoFaturamento = new Chart(
+    document.getElementById("graficoFaturamento"),
+    {
+      type: "line",
+      data: {
+        labels: vendas.map((_, i) => `Venda ${i + 1}`),
+        datasets: [{
+          label: "Faturamento (R$)",
+          data: vendas,
+          borderWidth: 3,
+          tension: 0.4
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            min: 0,
+            max: 50000
+          }
+        }
+      }
     }
-  });
+  );
 
-  graficoVendas = new Chart(canvasVen, {
-    type: "bar",
-    data: {
-      labels: ["Vendas"],
-      datasets: [{
-        label: "Quantidade",
-        data: [vendas.length]
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false
+  graficoVendas = new Chart(
+    document.getElementById("graficoVendas"),
+    {
+      type: "bar",
+      data: {
+        labels: ["Vendas"],
+        datasets: [{
+          label: "Quantidade",
+          data: [vendas.length]
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            min: 0,
+            max: 50000
+          }
+        }
+      }
     }
-  });
-}
-
-  graficoVendas = new Chart(ctx2, {
-    type: "bar",
-    data: {
-      labels: ["Vendas"],
-      datasets: [{
-        label: "Quantidade",
-        data: [vendas.length]
-      }]
-    }
-  });
+  );
 }
