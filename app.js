@@ -4,8 +4,10 @@ let vendas = JSON.parse(localStorage.getItem("vendas")) || [];
 
 function login() {
   if (user.value === "demo" && pass.value === "1234") {
-    loginDiv(false);
-  } else alert("Login inválido");
+    loginDiv(true);
+  } else {
+    alert("Login inválido");
+  }
 }
 
 function loginDiv(ok) {
