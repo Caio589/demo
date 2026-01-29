@@ -98,31 +98,72 @@ function atualizar() {
 
 function criarGraficos() {
 
+  // garante que Chart.js existe
+  if (typeof Chart === "undefined") {
+    console.error("Chart.js NÃO carregou");
+    return;
+  }
+
+  const canvasFat = document.getElementById("graficoFaturamento");
+  const canvasVen = document.getElementById("graficoVendas");
+
+  if (!canvasFat || !canvasVen) {
+    console.warn("Canvas não encontrado");
+    return;
+  }
+
+  // destrói gráficos antigos
   if (graficoFaturamento) graficoFaturamento.destroy();
   if (graficoVendas) graficoVendas.destroy();
 
   const valores = vendas.map(v => v.valor);
 
-  graficoFaturamento = new Chart(
-    document.getElementById("graficoFaturamento"),
-    {
-      type: "line",
-      data: {
-        labels: valores.map((_, i) => `Venda ${i + 1}`),
-        datasets: [{
-          label: "Faturamento (R$)",
-          data: valores,
-          borderWidth: 3,
-          tension: 0.4
-        }]
-      },
-      options: {
-        scales: {
-          y: { min: 0, max: 50000 }
+  // gráfico faturamento
+  graficoFaturamento = new Chart(canvasFat, {
+    type: "line",
+    data: {
+      labels: valores.map((_, i) => `Venda ${i + 1}`),
+      datasets: [{
+        label: "Faturamento (R$)",
+        data: valores,
+        borderWidth: 3,
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          min: 0,
+          max: 50000
         }
       }
     }
-  );
+  });
+
+  // gráfico quantidade
+  graficoVendas = new Chart(canvasVen, {
+    type: "bar",
+    data: {
+      labels: ["Vendas"],
+      datasets: [{
+        label: "Quantidade",
+        data: [vendas.length]
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          min: 0,
+          max: 50000
+        }
+      }
+    }
+  });
+}
 
   graficoVendas = new Chart(
     document.getElementById("graficoVendas"),
