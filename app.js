@@ -6,9 +6,12 @@ let graficoFaturamento;
 let graficoVendas;
 
 function login() {
+  const loginDiv = document.getElementById("login");
+  const appDiv = document.getElementById("app");
+
   if (user.value === "demo" && pass.value === "1234") {
-    login.style.display = "none";
-    app.classList.remove("hidden");
+    loginDiv.style.display = "none";
+    appDiv.classList.remove("hidden");
     atualizar();
   } else {
     alert("Login inválido");
