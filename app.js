@@ -5,11 +5,13 @@ let vendas = JSON.parse(localStorage.getItem("vendas")) || [];
 let graficoFaturamento;
 let graficoVendas;
 
-function login() {
+function doLogin() {
   const loginDiv = document.getElementById("login");
   const appDiv = document.getElementById("app");
+  const userInput = document.getElementById("user");
+  const passInput = document.getElementById("pass");
 
-  if (user.value === "demo" && pass.value === "1234") {
+  if (userInput.value === "demo" && passInput.value === "1234") {
     loginDiv.style.display = "none";
     appDiv.classList.remove("hidden");
     atualizar();
