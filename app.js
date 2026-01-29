@@ -86,7 +86,6 @@ function atualizar() {
 
   const total = vendas.reduce((s, v) => s + v.valor, 0);
 
-  vendasEl.innerText;
   document.getElementById("vendas").innerText = vendas.length;
   document.getElementById("clientes").innerText = clientes.length;
   document.getElementById("produtos").innerText = produtos.length;
