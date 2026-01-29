@@ -1,14 +1,21 @@
+// DADOS
 let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
 let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
 let vendas = JSON.parse(localStorage.getItem("vendas")) || [];
 
-let graficoFaturamento;
-let graficoVendas;
+let graficoFaturamento = null;
+let graficoVendas = null;
 
+// LOGIN
 function doLogin() {
+  const loginDiv = document.getElementById("login");
+  const appDiv = document.getElementById("app");
+  const user = document.getElementById("user");
+  const pass = document.getElementById("pass");
+
   if (user.value === "demo" && pass.value === "1234") {
-    login.style.display = "none";
-    app.classList.remove("hidden");
+    loginDiv.style.display = "none";
+    appDiv.classList.remove("hidden");
     atualizar();
   } else {
     alert("Login inválido");
@@ -19,49 +26,68 @@ function logout() {
   location.reload();
 }
 
+// NAVEGAÇÃO
 function show(id) {
   document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
   document.getElementById(id).classList.remove("hidden");
 }
 
+// CLIENTES
 function addCliente() {
-  if (!novoCliente.value) return;
-  clientes.push(novoCliente.value);
-  novoCliente.value = "";
+  const input = document.getElementById("novoCliente");
+  if (!input.value) return;
+
+  clientes.push(input.value);
+  input.value = "";
   salvar();
 }
 
+// PRODUTOS
 function addProduto() {
-  if (!nomeProduto.value || !precoProduto.value) return;
-  produtos.push({ nome: nomeProduto.value, preco: Number(precoProduto.value) });
-  nomeProduto.value = precoProduto.value = "";
+  const nome = document.getElementById("nomeProduto");
+  const preco = document.getElementById("precoProduto");
+
+  if (!nome.value || !preco.value) return;
+
+  produtos.push({
+    nome: nome.value,
+    preco: Number(preco.value)
+  });
+
+  nome.value = "";
+  preco.value = "";
   salvar();
 }
 
+// VENDAS
 function registrarVenda() {
-  const produto = produtos[produtoVenda.selectedIndex];
-  const pagamento = pagamentoVenda.value;
-  const cliente = clienteVenda.value;
+  const cliente = document.getElementById("clienteVenda").value;
+  const pagamento = document.getElementById("pagamentoVenda").value;
+  const produtoIndex = document.getElementById("produtoVenda").selectedIndex;
 
-  if (!produto || !pagamento || !cliente) {
+  if (!cliente || !pagamento || produtoIndex < 0) {
     alert("Preencha todos os campos");
     return;
   }
 
+  const produto = produtos[produtoIndex];
+
   vendas.push({
+    cliente,
     produto: produto.nome,
     valor: produto.preco,
     pagamento,
-    cliente,
     data: new Date().toLocaleString()
   });
 
   salvar();
 
-  msgVenda.style.display = "block";
-  setTimeout(() => msgVenda.style.display = "none", 2000);
+  const msg = document.getElementById("msgVenda");
+  msg.style.display = "block";
+  setTimeout(() => msg.style.display = "none", 2000);
 }
 
+// SALVAR
 function salvar() {
   localStorage.setItem("clientes", JSON.stringify(clientes));
   localStorage.setItem("produtos", JSON.stringify(produtos));
@@ -69,56 +95,52 @@ function salvar() {
   atualizar();
 }
 
+// ATUALIZAR TELA
 function atualizar() {
+  document.getElementById("listaClientes").innerHTML =
+    clientes.map(c => `<li>${c}</li>`).join("");
 
-  listaClientes.innerHTML = clientes.map(c => `<li>${c}</li>`).join("");
-  listaProdutos.innerHTML = produtos.map(p => `<li>${p.nome} - R$ ${p.preco.toFixed(2)}</li>`).join("");
+  document.getElementById("listaProdutos").innerHTML =
+    produtos.map(p => `<li>${p.nome} - R$ ${p.preco.toFixed(2)}</li>`).join("");
 
-  clienteVenda.innerHTML = clientes.map(c => `<option>${c}</option>`).join("");
-  produtoVenda.innerHTML = produtos.map(p => `<option>${p.nome}</option>`).join("");
+  document.getElementById("clienteVenda").innerHTML =
+    clientes.map(c => `<option>${c}</option>`).join("");
 
-  listaVendas.innerHTML = vendas.slice(-5).reverse().map(v =>
-    `<li>
-      ${v.produto} - R$ ${v.valor.toFixed(2)}<br>
-      <small>${v.pagamento} • ${v.data}</small>
-    </li>`
-  ).join("");
+  document.getElementById("produtoVenda").innerHTML =
+    produtos.map(p => `<option>${p.nome}</option>`).join("");
 
-  const total = vendas.reduce((s, v) => s + v.valor, 0);
+  document.getElementById("listaVendas").innerHTML =
+    vendas.slice(-5).reverse().map(v =>
+      `<li>
+        ${v.produto} - R$ ${v.valor.toFixed(2)}<br>
+        <small>${v.pagamento} • ${v.data}</small>
+      </li>`
+    ).join("");
 
   document.getElementById("vendas").innerText = vendas.length;
   document.getElementById("clientes").innerText = clientes.length;
   document.getElementById("produtos").innerText = produtos.length;
+
+  const total = vendas.reduce((s, v) => s + v.valor, 0);
   document.getElementById("faturamento").innerText =
     total.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
 
   criarGraficos();
 }
 
+// GRÁFICOS
 function criarGraficos() {
+  if (typeof Chart === "undefined") return;
 
-  // garante que Chart.js existe
-  if (typeof Chart === "undefined") {
-    console.error("Chart.js NÃO carregou");
-    return;
-  }
+  const fat = document.getElementById("graficoFaturamento");
+  const qtd = document.getElementById("graficoVendas");
 
-  const canvasFat = document.getElementById("graficoFaturamento");
-  const canvasVen = document.getElementById("graficoVendas");
-
-  if (!canvasFat || !canvasVen) {
-    console.warn("Canvas não encontrado");
-    return;
-  }
-
-  // destrói gráficos antigos
   if (graficoFaturamento) graficoFaturamento.destroy();
   if (graficoVendas) graficoVendas.destroy();
 
   const valores = vendas.map(v => v.valor);
 
-  // gráfico faturamento
-  graficoFaturamento = new Chart(canvasFat, {
+  graficoFaturamento = new Chart(fat, {
     type: "line",
     data: {
       labels: valores.map((_, i) => `Venda ${i + 1}`),
@@ -133,16 +155,12 @@ function criarGraficos() {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
-        y: {
-          min: 0,
-          max: 50000
-        }
+        y: { min: 0, max: 50000 }
       }
     }
   });
 
-  // gráfico quantidade
-  graficoVendas = new Chart(canvasVen, {
+  graficoVendas = new Chart(qtd, {
     type: "bar",
     data: {
       labels: ["Vendas"],
@@ -155,26 +173,8 @@ function criarGraficos() {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
-        y: {
-          min: 0,
-          max: 50000
-        }
+        y: { min: 0, max: 50000 }
       }
     }
   });
-}
-
-  graficoVendas = new Chart(
-    document.getElementById("graficoVendas"),
-    {
-      type: "bar",
-      data: {
-        labels: ["Vendas"],
-        datasets: [{
-          label: "Quantidade",
-          data: [vendas.length]
-        }]
-      }
-    }
-  );
 }
