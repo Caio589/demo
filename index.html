@@ -14,7 +14,7 @@
     <h2>Dashboard Administrativo</h2>
     <input id="user" placeholder="Usuário">
     <input id="pass" type="password" placeholder="Senha">
-   <button onclick="doLogin()">Entrar</button>
+    <button onclick="doLogin()">Entrar</button>
     <small>demo / 1234</small>
   </div>
 </div>
@@ -31,22 +31,17 @@
   </aside>
 
   <main>
+
     <!-- DASHBOARD -->
     <section id="home" class="page">
       <h2>Resumo Geral</h2>
 
       <div class="cards">
-        <div class="card" data-title="Vendas">
-          <strong id="vendas">0</strong>
-        </div>
-        <div class="card" data-title="Clientes">
-          <strong id="clientes">0</strong>
-        </div>
-        <div class="card" data-title="Produtos">
-          <strong id="produtos">0</strong>
-        </div>
+        <div class="card" data-title="Vendas"><strong id="vendas">0</strong></div>
+        <div class="card" data-title="Clientes"><strong id="clientes">0</strong></div>
+        <div class="card" data-title="Produtos"><strong id="produtos">0</strong></div>
         <div class="card" data-title="Faturamento">
-          <strong>R$ <span id="faturamento">0</span></strong>
+          <strong>R$ <span id="faturamento">0,00</span></strong>
         </div>
       </div>
 
@@ -55,20 +50,35 @@
           <h4>Faturamento</h4>
           <canvas id="graficoFaturamento"></canvas>
         </div>
-
         <div class="card">
           <h4>Quantidade de Vendas</h4>
           <canvas id="graficoVendas"></canvas>
         </div>
+      </div>
+
+      <div class="card">
+        <h4>Últimas Vendas</h4>
+        <ul id="listaVendas"></ul>
       </div>
     </section>
 
     <!-- VENDAS -->
     <section id="sales" class="page hidden">
       <h2>Registrar Venda</h2>
+
       <select id="clienteVenda"></select>
       <select id="produtoVenda"></select>
+
+      <select id="pagamentoVenda">
+        <option value="">Forma de pagamento</option>
+        <option>Dinheiro</option>
+        <option>Pix</option>
+        <option>Cartão</option>
+      </select>
+
       <button onclick="registrarVenda()">Registrar Venda</button>
+
+      <p id="msgVenda" class="sucesso">✅ Venda registrada com sucesso</p>
     </section>
 
     <!-- CLIENTES -->
@@ -87,6 +97,7 @@
       <button onclick="addProduto()">Adicionar</button>
       <ul id="listaProdutos"></ul>
     </section>
+
   </main>
 </div>
 
