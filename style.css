@@ -109,9 +109,20 @@ main {
   box-shadow: 0 15px 30px rgba(0,0,0,.08);
 }
 
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 110px;
+}
+
 .card strong {
-  font-size: 26px;
+  font-size: 28px;
+  font-weight: 600;
   color: var(--roxo);
+  margin-top: 8px;
+  line-height: 1.2;
+  word-break: break-word;
 }
 
 input, select, button {
